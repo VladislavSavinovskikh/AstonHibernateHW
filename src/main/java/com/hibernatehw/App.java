@@ -7,7 +7,8 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 public class App {
-    static void main() {
+    public static void main(String[] args)
+    {
         log.info("=== ЗАПУСК ПРИЛОЖЕНИЯ ===");
         try {
             UserService userService = new UserService();
