@@ -1,4 +1,4 @@
-package com.hibernatehw;
+package com.hibernatehw.util;
 
 
 import lombok.Getter;
@@ -13,9 +13,9 @@ public class HibernateUtil {
 
     private static SessionFactory buildSessionFactory() {
         try {
-            log.info("Инициализация SessionFactory");
+            log.debug("Инициализация SessionFactory");
             SessionFactory factory = new Configuration().configure().buildSessionFactory();
-            log.info("SessionFactory успешно создана");
+            log.debug("SessionFactory успешно создана");
             return factory;
         } catch (Throwable ex) {
             log.error("Ошибка при создании SessionFactory: {}", ex.getMessage(), ex);
@@ -24,8 +24,8 @@ public class HibernateUtil {
     }
 
     public static void shutdown() {
-        log.info("Закрытие SessionFactory");
+        log.debug("Закрытие SessionFactory");
         getSessionFactory().close();
-        log.info("SessionFactory закрыта");
+        log.debug("SessionFactory закрыта");
     }
 }

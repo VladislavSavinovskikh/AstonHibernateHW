@@ -1,10 +1,13 @@
-package com.hibernatehw;
+package com.hibernatehw.DAO;
 
+import com.hibernatehw.util.TransactionHelper;
+import com.hibernatehw.model.User;
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 import java.util.List;
+import java.util.Optional;
 
 @Log4j2
 public class HibernateDAO implements DAO {
@@ -20,7 +23,7 @@ public class HibernateDAO implements DAO {
 
     @Override
     public List<User> findAll() {
-        log.debug("Запрос всех пользователей из БД");
+        log.info("Запрос всех пользователей из БД");
         try (Session session = sessionFactory.openSession()) {
             return session
                     .createQuery("SELECT u FROM User u", User.class)
@@ -32,13 +35,14 @@ public class HibernateDAO implements DAO {
     }
 
     @Override
-    public User findUserById(Long id) {
+    public Optional<User> findUserById(Long id) {
         log.info("Попытка получения пользователя по id: {}", id);
         try (Session session = sessionFactory.openSession()) {
-            return session.get(User.class, id);
+            User user = session.get(User.class, id);
+            return Optional.ofNullable(user);
         } catch (Exception e) {
             log.error("Ошибка при поиске пользователя с id {}: {}", id, e.getMessage());
-            return null;
+            return Optional.empty();
         }
     }
 
@@ -56,7 +60,7 @@ public class HibernateDAO implements DAO {
         log.info("Обновление пользователя: {}", user);
         transactionHelper.executeInTransaction(session -> {
             session.merge(user);
-            log.info("Пользователь с ID {} успешно обновлен", user.getId());
+            log.debug("Пользователь с ID {} успешно обновлен", user.getId());
         });
     }
 
@@ -67,6 +71,6 @@ public class HibernateDAO implements DAO {
             User userToDelete = session.get(User.class, id);
             session.remove(userToDelete);
         });
-        log.info("Пользователь с ID {} удален из БД", id);
+        log.debug("Пользователь с ID {} удален из БД", id);
     }
 }

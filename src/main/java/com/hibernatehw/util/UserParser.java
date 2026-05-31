@@ -1,5 +1,6 @@
-package com.hibernatehw;
+package com.hibernatehw.util;
 
+import com.hibernatehw.model.User;
 import lombok.extern.log4j.Log4j2;
 
 
@@ -8,7 +9,7 @@ public class UserParser {
     public static User parse(String s) {
         log.debug("Парсинг строки: {}", s);
 
-        String[] split = s.split(" ");
+        String[] split = s.trim().split("\\s+");
 
         if (split.length < 3) {
             log.error("Неверный формат строки. Получено {} аргументов, ожидается 3", split.length);

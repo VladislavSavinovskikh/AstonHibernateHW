@@ -1,4 +1,4 @@
-package com.hibernatehw;
+package com.hibernatehw.util;
 
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.Session;
@@ -29,13 +29,13 @@ public class TransactionHelper {
             log.debug("Действие в транзакции выполнено");
 
             transaction.commit();
-            log.info("Транзакция успешно подтверждена");
+            log.debug("Транзакция успешно подтверждена");
         } catch (Exception e) {
             log.error("Ошибка при выполнении транзакции: {}", e.getMessage());
             if (transaction != null && transaction.isActive()) {
                 log.warn("Выполняется rollback транзакции");
                 transaction.rollback();
-                log.info("Rollback выполнен");
+                log.debug("Rollback выполнен");
             }
             throw new RuntimeException("Ошибка в транзакции", e);
         }

@@ -1,4 +1,4 @@
-package com.hibernatehw;
+package com.hibernatehw.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -17,7 +17,8 @@ import java.util.Objects;
 @ToString
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
+    @SequenceGenerator(name = "user_seq", sequenceName = "users_id_seq", allocationSize = 1)
     private Long id;
     private String name;
     private String email;

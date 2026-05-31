@@ -1,5 +1,8 @@
 package com.hibernatehw;
 
+import com.hibernatehw.service.UserService;
+import com.hibernatehw.ui.UI;
+import com.hibernatehw.util.HibernateUtil;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -13,7 +16,7 @@ public class App {
         } catch (Exception e) {
             log.error("Критическая ошибка приложения: {}", e.getMessage(), e);
         } finally {
-            log.info("Закрытие ресурсов...");
+            log.debug("Закрытие ресурсов...");
             HibernateUtil.shutdown();
             log.info("=== ЗАВЕРШЕНИЕ РАБОТЫ ===");
         }

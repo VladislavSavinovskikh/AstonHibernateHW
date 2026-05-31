@@ -1,7 +1,10 @@
-package com.hibernatehw;
+package com.hibernatehw.ui;
 
+import com.hibernatehw.model.User;
+import com.hibernatehw.service.UserService;
 import lombok.extern.log4j.Log4j2;
 
+import java.util.Optional;
 import java.util.Scanner;
 
 @Log4j2
@@ -81,37 +84,46 @@ public class UI {
         }
     }
 
-    private User getUserFromInput(String actionName) {
+    private Optional<User> getUserFromInput(String actionName) {
         while (true) {
             System.out.println("Введите id пользователя которого хотите " + actionName);
             System.out.println("0. Выйти в меню");
 
-            try {
-                long userId = Long.parseLong(sc.nextLine().trim());
+            String input = sc.nextLine().trim();
 
-                if (userId == 0) return null;
+            if (input.isEmpty()) {
+                System.out.println("Ввод не может быть пустым!");
+                continue;
+            }
+
+            try {
+                long userId = Long.parseLong(input);
+
+                if (userId == 0) return Optional.empty();
                 if (userId < 0) {
                     System.out.println("Id пользователя должно быть положительным!");
                     continue;
                 }
 
-                User user = this.userService.getUserById(userId);
-                if (user == null) {
+                Optional<User> userOptional = userService.getUserById(userId);
+                if (userOptional.isEmpty()) {
                     System.out.println("Пользователь с id " + userId + " не найден");
                     continue;
                 }
 
-                return user;
+                return userOptional;
 
             } catch (NumberFormatException e) {
-                System.out.println("Ошибка: введите число!");
+                System.out.println("Ошибка: введите целое число!");
             }
         }
     }
 
     private void showDelete() {
-        User user = getUserFromInput("удалить");
-        if (user == null) return;
+        Optional<User> userOptional = getUserFromInput("удалить");
+        if (userOptional.isEmpty()) return;
+
+        User user = userOptional.get();
 
         System.out.println("Данные выбранного пользователя:");
         System.out.println(user);
@@ -121,14 +133,22 @@ public class UI {
         if (choice.equals("1")) {
             userService.deleteUser(user.getId());
             System.out.println("Пользователь успешно удален");
+        } else if (choice.equals("2")) {
+            System.out.println("Удаление отменено");
+        } else {
+            System.out.println("Некорректный выбор");
         }
     }
 
 
     private void showUpdate() {
-        User user = getUserFromInput("изменить");
-        if (user == null) return;
+        Optional<User> userOptional = getUserFromInput("изменить");
+        if (userOptional.isEmpty()) {
+            System.out.println("Операция отменена");
+            return;
+        }
 
+        User user = userOptional.get();
         System.out.println("Данные выбранного пользователя:");
         System.out.println(user);
 
@@ -138,7 +158,10 @@ public class UI {
 
             String input = sc.nextLine().trim();
 
-            if (input.equals("0")) return;
+            if (input.equals("0")) {
+                System.out.println("Обновление отменено");
+                return;
+            }
 
             if (input.isEmpty()) {
                 System.out.println("Пустой ввод!");

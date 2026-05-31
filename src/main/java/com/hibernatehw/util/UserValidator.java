@@ -1,4 +1,4 @@
-package com.hibernatehw;
+package com.hibernatehw.util;
 
 import lombok.extern.log4j.Log4j2;
 

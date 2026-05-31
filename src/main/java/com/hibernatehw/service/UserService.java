@@ -1,9 +1,15 @@
-package com.hibernatehw;
+package com.hibernatehw.service;
 
+import com.hibernatehw.DAO.HibernateDAO;
+import com.hibernatehw.model.User;
+import com.hibernatehw.util.HibernateUtil;
+import com.hibernatehw.util.TransactionHelper;
+import com.hibernatehw.util.UserParser;
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.SessionFactory;
 
 import java.util.List;
+import java.util.Optional;
 
 @Log4j2
 public class UserService {
@@ -51,23 +57,24 @@ public class UserService {
     public void deleteUser(Long id) {
         log.info("Попытка удаления пользователя с id: {}", id);
         try {
-            hibernateDAO.delete(id);
-            log.info("Пользователь с ID {} успешно удален", id);
+            // Добавляем проверку существования пользователя
+            Optional<User> userOpt = getUserById(id);
+            if (userOpt.isPresent()) {
+                hibernateDAO.delete(id);
+                log.info("Пользователь с ID {} успешно удален", id);
+            } else {
+                log.warn("Попытка удалить несуществующего пользователя с ID: {}", id);
+                System.out.println("Пользователь с ID " + id + " не найден");
+            }
         } catch (Exception e) {
             log.error("Ошибка при удалении пользователя с ID {}: {}", id, e.getMessage(), e);
             System.out.println("Ошибка при удалении пользователя");
         }
     }
 
-    public User getUserById(Long id) {
-        log.debug("Поиск пользователя по ID: {}", id);
-        User user = hibernateDAO.findUserById(id);
-        if (user != null) {
-            log.debug("Пользователь найден: {}", user);
-        } else {
-            log.warn("Пользователь с ID {} не найден", id);
-        }
-        return user;
+    public Optional<User> getUserById(Long id) {
+        log.info("Поиск пользователя по ID: {}", id);
+        return hibernateDAO.findUserById(id);
     }
 
     public boolean updateUser(User existingUser, String updatedUser) {
